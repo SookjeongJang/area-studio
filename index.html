@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#f7f4ec" />
-  <title>영역확장 카드 만들기</title>
+  <title>오늘의 영역</title>
   <style>
     :root {
       --bg: #f7f4ec;
@@ -14,7 +14,7 @@
       --line: #e6dfd2;
       --accent: #4d684f;
       --accent-soft: #e8efe7;
-      --gold: #d7a02d;
+      --gold: #688b6e;
     }
     * { box-sizing: border-box; }
     body {
@@ -191,7 +191,7 @@
       border-radius: 20px;
       background: rgba(255,255,255,.72);
       border: 1px solid rgba(77,104,79,.16);
-      font-size: 22px;
+      font-size: 27px;
       line-height: 1.7;
       text-align: center;
       word-break: keep-all;
@@ -239,14 +239,22 @@
 <body>
   <main class="wrap">
     <header>
-      <h1>🌱 영역확장 카드 만들기</h1>
-      <p class="intro">입력하고 PNG 이미지로 저장하거나, 바로 복사해 네이버 블로그에 붙여넣어요.</p>
+      <h1>🌱 오늘의 영역</h1>
+      <p class="intro">오늘 넓어진 영역을 기록하고 대표 이미지를 만들어요.</p>
     </header>
 
     <section class="panel">
       <div class="field">
         <label for="number">영역확장 번호</label>
-        <input id="number" type="number" min="1" value="1" />
+        <div style="display:grid;grid-template-columns:1fr auto;gap:10px;">
+          <input id="number" type="number" min="1" value="1" />
+          <button class="plain" id="resetNumber" type="button">001부터 다시</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="postTitle">글 제목</label>
+        <input id="postTitle" placeholder="예: 안 해도 될 영역 확장이로다_신용 회복 상담하기" />
       </div>
 
       <div class="field">
@@ -317,7 +325,9 @@
       <div class="image-card-wrap">
         <article id="card" class="image-card">
           <div class="card-kicker">HAPPY AREA HUMAN</div>
+          <div id="cardIcon" style="text-align:center;font-size:42px;margin-top:12px;">🌱</div>
           <div id="cardArea" class="card-title">오늘의 영역</div>
+          <div id="cardPostTitle" style="text-align:center;color:#4b4943;font-size:20px;line-height:1.5;margin:0 auto 10px;max-width:470px;word-break:keep-all;">오늘의 글 제목</div>
           <div id="cardNumber" class="card-number">영역확장 No.001</div>
 
           <div class="metric">
@@ -334,6 +344,7 @@
           <div class="again"><b>다시 해보고 싶은가?</b><br><span id="cardAgain">예</span></div>
           <div class="next"><b>다음에 넓혀보고 싶은 영역</b><br><span id="cardNext">천천히 생각해 보기</span></div>
 
+          <div style="margin-top:34px;text-align:center;color:#4d684f;font-size:18px;font-weight:800;">오늘도 조금, 영역이 넓어졌다.</div>
           <div class="signature">행복한영역인가 · 영역확장 이야기</div>
         </article>
       </div>
@@ -354,9 +365,31 @@
     return "★".repeat(n) + "☆".repeat(5 - n);
   }
 
+  const iconMap = [
+    { keys: ["돈", "재테크", "금융", "신용", "빚"], icon: "💰" },
+    { keys: ["글", "작가", "블로그"], icon: "✍️" },
+    { keys: ["책", "독서"], icon: "📚" },
+    { keys: ["산책", "걷기"], icon: "🚶" },
+    { keys: ["식물", "화분", "정원"], icon: "🪴" },
+    { keys: ["집", "미니멀", "정리"], icon: "🏡" },
+    { keys: ["카페", "커피"], icon: "☕" },
+    { keys: ["공부", "배움"], icon: "💡" },
+    { keys: ["사람", "관계"], icon: "❤️" },
+    { keys: ["장소", "여행", "동네"], icon: "🌍" }
+  ];
+
+  function findIcon(area) {
+    const text = (area || "").toLowerCase();
+    for (const item of iconMap) {
+      if (item.keys.some(k => text.includes(k))) return item.icon;
+    }
+    return "🌱";
+  }
+
   function values() {
     return {
       number: $("#number").value || "1",
+      postTitle: $("#postTitle").value.trim() || "오늘의 글 제목",
       area: $("#area").value.trim() || "아직 이름 붙이지 못한 영역",
       expand: checkedValue("expand"),
       joy: checkedValue("joy"),
@@ -368,7 +401,9 @@
 
   function makeCard() {
     const v = values();
+    $("#cardIcon").textContent = findIcon(v.area);
     $("#cardArea").textContent = v.area;
+    $("#cardPostTitle").textContent = v.postTitle;
     $("#cardNumber").textContent = `영역확장 No.${String(v.number).padStart(3, "0")}`;
     $("#cardExpand").textContent = stars(v.expand);
     $("#cardJoy").textContent = stars(v.joy);
@@ -377,6 +412,14 @@
     $("#cardNext").textContent = v.next;
     localStorage.setItem("areaExpansionNumber", v.number);
     $("#notice").textContent = "카드를 새로 만들었어요.";
+  }
+
+
+  function resetNumber() {
+    localStorage.setItem("areaExpansionNumber", "1");
+    $("#number").value = 1;
+    makeCard();
+    $("#notice").textContent = "번호를 No.001부터 다시 시작했어요.";
   }
 
   function roundedRect(ctx, x, y, w, h, r) {
@@ -444,15 +487,22 @@
     ctx.textAlign = "center";
     ctx.fillStyle = "#4d684f";
     ctx.font = '700 28px "Noto Sans KR", sans-serif';
-    ctx.fillText("HAPPY AREA HUMAN", W/2, 155);
+    ctx.fillText("HAPPY AREA HUMAN", W/2, 145);
+
+    ctx.font = '54px "Noto Sans KR", sans-serif';
+    ctx.fillText(findIcon(v.area), W/2, 220);
 
     ctx.fillStyle = "#24231f";
-    ctx.font = '800 58px "Noto Sans KR", sans-serif';
-    wrapText(ctx, v.area, W/2, 245, 780, 74, 2);
+    ctx.font = '800 54px "Noto Sans KR", sans-serif';
+    wrapText(ctx, v.area, W/2, 300, 780, 68, 2);
+
+    ctx.fillStyle = "#4b4943";
+    ctx.font = '600 30px "Noto Sans KR", sans-serif';
+    wrapText(ctx, v.postTitle, W/2, 390, 780, 44, 2);
 
     ctx.fillStyle = "#77736b";
-    ctx.font = '400 25px "Noto Sans KR", sans-serif';
-    ctx.fillText(`영역확장 No.${String(v.number).padStart(3, "0")}`, W/2, 355);
+    ctx.font = '400 24px "Noto Sans KR", sans-serif';
+    ctx.fillText(`영역확장 No.${String(v.number).padStart(3, "0")}`, W/2, 475);
 
     ctx.textAlign = "left";
     ctx.strokeStyle = "rgba(77,104,79,.16)";
@@ -504,7 +554,9 @@
     ctx.textAlign = "center";
     ctx.fillStyle = "#77736b";
     ctx.font = '400 23px "Noto Sans KR", sans-serif';
-    ctx.fillText("행복한영역인가 · 영역확장 이야기", W/2, 1240);
+    ctx.fillStyle = "#4d684f";
+    ctx.font = '800 26px "Noto Sans KR", sans-serif';
+    ctx.fillText("오늘도 조금, 영역이 넓어졌다.", W/2, 1240);
 
     return c;
   }
@@ -536,6 +588,7 @@
   }
 
   $("#make").addEventListener("click", makeCard);
+  $("#resetNumber").addEventListener("click", resetNumber);
   $("#download").addEventListener("click", downloadPng);
   $("#copyImage").addEventListener("click", copyImage);
 
