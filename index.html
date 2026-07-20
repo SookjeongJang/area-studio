@@ -3,598 +3,695 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#f7f4ec" />
+  <meta name="theme-color" content="#f6f3ec" />
   <title>오늘의 영역</title>
   <style>
-    :root {
-      --bg: #f7f4ec;
-      --card: #fffdf8;
-      --text: #24231f;
-      --muted: #77736b;
-      --line: #e6dfd2;
-      --accent: #4d684f;
-      --accent-soft: #e8efe7;
-      --gold: #688b6e;
+    :root{
+      --bg:#f6f3ec;
+      --paper:#fffdf9;
+      --text:#2b2a27;
+      --muted:#7b776f;
+      --line:#e4dfd5;
+      --green:#58715a;
+      --green-soft:#eaf0e7;
+      --shadow:0 16px 40px rgba(70,60,45,.08);
     }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", sans-serif;
-      line-height: 1.55;
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",sans-serif;
+      line-height:1.65;
     }
-    .wrap {
-      width: min(760px, calc(100% - 28px));
-      margin: 28px auto 56px;
+    button,input,textarea,select{font:inherit}
+    .wrap{
+      width:min(1160px,calc(100% - 28px));
+      margin:24px auto 60px;
     }
-    header { margin-bottom: 18px; }
-    h1 { margin: 0 0 6px; font-size: 28px; }
-    .intro { margin: 0; color: var(--muted); }
-    .panel {
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: 22px;
-      padding: 20px;
-      box-shadow: 0 10px 30px rgba(68, 57, 36, 0.06);
+    .top{
+      display:flex;
+      justify-content:space-between;
+      gap:16px;
+      align-items:flex-end;
+      margin-bottom:18px;
     }
-    label, legend {
-      display: block;
-      margin: 0 0 7px;
-      font-weight: 700;
-      font-size: 14px;
+    h1{margin:0;font-size:32px;letter-spacing:-.03em}
+    .sub{margin:4px 0 0;color:var(--muted)}
+    .status{
+      color:var(--green);
+      font-size:14px;
+      font-weight:800;
+      white-space:nowrap;
     }
-    .field { margin-bottom: 18px; }
-    input, textarea {
-      width: 100%;
-      border: 1px solid var(--line);
-      border-radius: 13px;
-      background: #fff;
-      color: var(--text);
-      padding: 13px 14px;
-      font: inherit;
-      outline: none;
+    .layout{
+      display:grid;
+      grid-template-columns:minmax(0,1.2fr) minmax(340px,.8fr);
+      gap:18px;
+      align-items:start;
     }
-    input:focus, textarea:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px var(--accent-soft);
+    .panel{
+      background:var(--paper);
+      border:1px solid var(--line);
+      border-radius:24px;
+      padding:22px;
+      box-shadow:var(--shadow);
     }
-    textarea { min-height: 92px; resize: vertical; }
-    .stars {
-      display: flex;
-      flex-direction: row-reverse;
-      justify-content: flex-end;
-      gap: 4px;
+    .section-title{
+      margin:0 0 16px;
+      font-size:18px;
     }
-    .stars input { display: none; }
-    .stars label {
-      margin: 0;
-      cursor: pointer;
-      font-size: 34px;
-      line-height: 1;
-      color: #d6d1c6;
-      user-select: none;
+    label,legend{
+      display:block;
+      margin:0 0 7px;
+      font-size:14px;
+      font-weight:800;
     }
-    .stars label::before { content: "★"; }
-    .stars input:checked ~ label,
+    .field{margin-bottom:18px}
+    input,textarea,select{
+      width:100%;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:#fff;
+      color:var(--text);
+      padding:13px 14px;
+      outline:none;
+    }
+    input:focus,textarea:focus,select:focus{
+      border-color:var(--green);
+      box-shadow:0 0 0 3px var(--green-soft);
+    }
+    #body{
+      min-height:430px;
+      resize:vertical;
+      line-height:1.8;
+    }
+    .helper{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      color:var(--muted);
+      font-size:12px;
+      margin-top:7px;
+    }
+    .row{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+    .stars{
+      display:flex;
+      flex-direction:row-reverse;
+      justify-content:flex-end;
+      gap:3px;
+    }
+    .stars input{display:none}
+    .stars label{
+      margin:0;
+      color:#d4d2cb;
+      font-size:34px;
+      line-height:1;
+      cursor:pointer;
+    }
+    .stars label::before{content:"★"}
+    .stars input:checked~label,
     .stars label:hover,
-    .stars label:hover ~ label { color: var(--gold); }
-    .check-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
+    .stars label:hover~label{color:var(--green)}
+    .choice{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
     }
-    .check-row label {
-      font-weight: 500;
-      background: #faf9f6;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      padding: 8px 12px;
-      cursor: pointer;
+    .choice label{
+      margin:0;
+      padding:8px 11px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background:#faf8f3;
+      font-weight:600;
+      cursor:pointer;
     }
-    .check-row input { width: auto; margin-right: 5px; }
-    .buttons {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-top: 8px;
+    .choice input{width:auto;margin-right:5px}
+    .actions{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:10px;
+      margin-top:8px;
     }
-    button {
-      border: 0;
-      border-radius: 14px;
-      padding: 14px 16px;
-      font: inherit;
-      font-weight: 800;
-      cursor: pointer;
+    button{
+      border:0;
+      border-radius:14px;
+      padding:13px 14px;
+      font-weight:800;
+      cursor:pointer;
     }
-    .primary { background: var(--accent); color: white; }
-    .secondary { background: var(--accent-soft); color: #324934; }
-    .plain { background: #f3efe7; color: #4b473f; }
-    .preview-title {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin: 26px 0 12px;
+    .primary{background:var(--green);color:#fff}
+    .soft{background:var(--green-soft);color:#38503a}
+    .plain{background:#f0ece4;color:#4b4741}
+    .danger{background:#f7ece9;color:#8a4940}
+    .preview{
+      position:sticky;
+      top:16px;
     }
-    .preview-title h2 { margin: 0; font-size: 18px; }
-
-    .image-card-wrap {
-      display: flex;
-      justify-content: center;
-      overflow: auto;
-      padding: 4px;
-    }
-    .image-card {
-      width: 640px;
-      min-height: 760px;
+    .card{
+      aspect-ratio:4/5;
+      min-height:560px;
+      border-radius:28px;
+      border:1px solid #d9dfd5;
+      padding:38px 34px 30px;
       background:
-        radial-gradient(circle at 15% 8%, rgba(197, 221, 197, .55), transparent 24%),
-        radial-gradient(circle at 90% 88%, rgba(246, 215, 173, .55), transparent 25%),
-        var(--card);
-      border: 1px solid #ddd5c7;
-      border-radius: 34px;
-      padding: 54px 52px 46px;
-      box-shadow: 0 16px 40px rgba(71, 62, 45, .10);
-      position: relative;
-      color: #292821;
+        radial-gradient(circle at 10% 8%,rgba(199,220,194,.8),transparent 25%),
+        radial-gradient(circle at 95% 92%,rgba(244,220,186,.75),transparent 26%),
+        #fffdf8;
+      position:relative;
+      overflow:hidden;
     }
-    .image-card::before {
-      content: "";
-      position: absolute;
-      inset: 18px;
-      border: 1px solid rgba(77,104,79,.22);
-      border-radius: 24px;
-      pointer-events: none;
+    .card::before{
+      content:"";
+      position:absolute;
+      inset:16px;
+      border:1px solid rgba(88,113,90,.25);
+      border-radius:20px;
+      pointer-events:none;
     }
-    .card-kicker {
-      text-align: center;
-      font-weight: 800;
-      color: var(--accent);
-      letter-spacing: .08em;
-      font-size: 16px;
+    .brand{
+      text-align:center;
+      color:var(--green);
+      font-weight:900;
+      letter-spacing:.12em;
+      font-size:12px;
+      position:relative;
     }
-    .card-title {
-      margin: 18px 0 6px;
-      text-align: center;
-      font-size: 38px;
-      line-height: 1.25;
-      word-break: keep-all;
+    .icon{
+      text-align:center;
+      font-size:38px;
+      margin-top:15px;
+      position:relative;
     }
-    .card-number {
-      text-align: center;
-      color: var(--muted);
-      margin-bottom: 34px;
-      font-size: 15px;
+    .area{
+      text-align:center;
+      font-size:34px;
+      font-weight:900;
+      line-height:1.25;
+      margin-top:2px;
+      position:relative;
+      word-break:keep-all;
     }
-    .metric {
-      display: grid;
-      grid-template-columns: 140px 1fr;
-      align-items: center;
-      gap: 16px;
-      padding: 18px 0;
-      border-top: 1px solid rgba(77,104,79,.16);
+    .post-title{
+      text-align:center;
+      color:#4b4943;
+      font-size:17px;
+      font-weight:700;
+      line-height:1.5;
+      margin:10px auto 0;
+      max-width:90%;
+      position:relative;
+      word-break:keep-all;
     }
-    .metric-label {
-      font-size: 15px;
-      font-weight: 800;
-      color: var(--accent);
+    .number{
+      text-align:center;
+      color:var(--muted);
+      font-size:13px;
+      margin-top:7px;
+      position:relative;
     }
-    .metric-value {
-      font-size: 23px;
-      font-weight: 800;
-      letter-spacing: .08em;
-      color: var(--gold);
+    .metric{
+      display:grid;
+      grid-template-columns:110px 1fr;
+      gap:12px;
+      border-top:1px solid rgba(88,113,90,.18);
+      padding:15px 4px;
+      position:relative;
     }
-    .quote {
-      margin: 24px 0;
-      padding: 24px 26px;
-      border-radius: 20px;
-      background: rgba(255,255,255,.72);
-      border: 1px solid rgba(77,104,79,.16);
-      font-size: 27px;
-      line-height: 1.7;
-      text-align: center;
-      word-break: keep-all;
+    .metric:first-of-type{margin-top:22px}
+    .metric b{color:var(--green);font-size:13px}
+    .metric span{color:var(--green);font-weight:900;letter-spacing:.08em}
+    .quote{
+      margin:18px 0;
+      padding:20px 18px;
+      border:1px solid rgba(88,113,90,.18);
+      border-radius:18px;
+      background:rgba(255,255,255,.76);
+      text-align:center;
+      font-size:22px;
+      font-weight:850;
+      line-height:1.55;
+      position:relative;
+      word-break:keep-all;
     }
-    .again, .next {
-      margin-top: 16px;
-      font-size: 17px;
-      line-height: 1.7;
+    .meta{
+      margin-top:12px;
+      font-size:14px;
+      position:relative;
     }
-    .again b, .next b { color: var(--accent); }
-    .signature {
-      margin-top: 38px;
-      text-align: center;
-      color: var(--muted);
-      font-size: 14px;
+    .meta b{color:var(--green)}
+    .ending{
+      margin-top:26px;
+      text-align:center;
+      color:var(--green);
+      font-weight:800;
+      font-size:15px;
+      position:relative;
     }
-    .notice {
-      min-height: 24px;
-      margin-top: 10px;
-      color: var(--accent);
-      font-weight: 700;
-      text-align: center;
+    .signature{
+      margin-top:6px;
+      text-align:center;
+      color:var(--muted);
+      font-size:11px;
+      position:relative;
     }
-    .tiny {
-      margin-top: 16px;
-      color: var(--muted);
-      font-size: 12px;
-      text-align: center;
+    .notice{
+      min-height:24px;
+      margin-top:12px;
+      color:var(--green);
+      font-weight:800;
+      text-align:center;
+      font-size:13px;
     }
-    #exportCanvas { display:none; }
-    @media (max-width: 680px) {
-      .buttons { grid-template-columns: 1fr; }
-      h1 { font-size: 24px; }
-      .image-card {
-        width: 100%;
-        min-height: 620px;
-        padding: 40px 28px 34px;
-      }
-      .card-title { font-size: 30px; }
-      .metric { grid-template-columns: 110px 1fr; }
-      .quote { font-size: 19px; }
+    #exportCanvas{display:none}
+    @media(max-width:900px){
+      .layout{grid-template-columns:1fr}
+      .preview{position:static}
+      #body{min-height:320px}
+    }
+    @media(max-width:600px){
+      .wrap{width:min(100% - 18px,1160px);margin-top:14px}
+      .top{align-items:flex-start;flex-direction:column}
+      .row{grid-template-columns:1fr}
+      .actions{grid-template-columns:1fr}
+      .panel{padding:16px;border-radius:20px}
+      .card{min-height:510px;padding:34px 24px 26px}
+      .area{font-size:29px}
+      .quote{font-size:19px}
     }
   </style>
 </head>
 <body>
   <main class="wrap">
-    <header>
-      <h1>🌱 오늘의 영역</h1>
-      <p class="intro">오늘 넓어진 영역을 기록하고 대표 이미지를 만들어요.</p>
+    <header class="top">
+      <div>
+        <h1>🌱 오늘의 영역</h1>
+        <p class="sub">생각난 것부터 편하게 쓰고, 마지막에 한 줄로 정리해요.</p>
+      </div>
+      <div class="status" id="saveStatus">자동 저장 준비됨</div>
     </header>
 
-    <section class="panel">
-      <div class="field">
-        <label for="number">영역확장 번호</label>
-        <div style="display:grid;grid-template-columns:1fr auto;gap:10px;">
-          <input id="number" type="number" min="1" value="1" />
-          <button class="plain" id="resetNumber" type="button">001부터 다시</button>
+    <div class="layout">
+      <section class="panel">
+        <h2 class="section-title">글쓰기</h2>
+
+        <div class="field">
+          <label for="title">글 제목</label>
+          <input id="title" placeholder="제목은 나중에 정해도 괜찮아요." />
         </div>
-      </div>
 
-      <div class="field">
-        <label for="postTitle">글 제목</label>
-        <input id="postTitle" placeholder="예: 안 해도 될 영역 확장이로다_신용 회복 상담하기" />
-      </div>
-
-      <div class="field">
-        <label for="area">오늘의 영역</label>
-        <input id="area" list="area-list" placeholder="예: 글쓰기, 산책, 식물" />
-        <datalist id="area-list">
-          <option value="글쓰기"></option>
-          <option value="책"></option>
-          <option value="산책"></option>
-          <option value="식물"></option>
-          <option value="미니멀라이프"></option>
-          <option value="새로운 장소"></option>
-          <option value="공부"></option>
-          <option value="돈 관리"></option>
-          <option value="바로 행동"></option>
-        </datalist>
-      </div>
-
-      <fieldset class="field" style="border:0;padding:0;margin-left:0;margin-right:0;">
-        <legend>영역 확장도</legend>
-        <div class="stars">
-          <input type="radio" id="expand5" name="expand" value="5"><label for="expand5"></label>
-          <input type="radio" id="expand4" name="expand" value="4"><label for="expand4"></label>
-          <input type="radio" id="expand3" name="expand" value="3" checked><label for="expand3"></label>
-          <input type="radio" id="expand2" name="expand" value="2"><label for="expand2"></label>
-          <input type="radio" id="expand1" name="expand" value="1"><label for="expand1"></label>
-        </div>
-      </fieldset>
-
-      <fieldset class="field" style="border:0;padding:0;margin-left:0;margin-right:0;">
-        <legend>즐거움</legend>
-        <div class="stars">
-          <input type="radio" id="joy5" name="joy" value="5"><label for="joy5"></label>
-          <input type="radio" id="joy4" name="joy" value="4" checked><label for="joy4"></label>
-          <input type="radio" id="joy3" name="joy" value="3"><label for="joy3"></label>
-          <input type="radio" id="joy2" name="joy" value="2"><label for="joy2"></label>
-          <input type="radio" id="joy1" name="joy" value="1"><label for="joy1"></label>
-        </div>
-      </fieldset>
-
-      <div class="field">
-        <label for="line">오늘의 한 줄</label>
-        <textarea id="line" placeholder="예: 잘 쓰려고 하지 않으니 생각보다 즐거웠다."></textarea>
-      </div>
-
-      <div class="field">
-        <label>다시 해보고 싶은가?</label>
-        <div class="check-row">
-          <label><input type="radio" name="again" value="예" checked>예</label>
-          <label><input type="radio" name="again" value="아마도">아마도</label>
-          <label><input type="radio" name="again" value="아니오">아니오</label>
-        </div>
-      </div>
-
-      <div class="field">
-        <label for="next">다음에 넓혀보고 싶은 영역</label>
-        <input id="next" placeholder="예: 동네의 안 가본 길 걷기" />
-      </div>
-
-      <div class="buttons">
-        <button class="primary" id="make">카드 새로 만들기</button>
-        <button class="secondary" id="download">PNG 저장하기</button>
-        <button class="plain" id="copyImage">이미지 복사하기</button>
-      </div>
-
-      <div class="preview-title"><h2>이미지 미리보기</h2></div>
-
-      <div class="image-card-wrap">
-        <article id="card" class="image-card">
-          <div class="card-kicker">HAPPY AREA HUMAN</div>
-          <div id="cardIcon" style="text-align:center;font-size:42px;margin-top:12px;">🌱</div>
-          <div id="cardArea" class="card-title">오늘의 영역</div>
-          <div id="cardPostTitle" style="text-align:center;color:#4b4943;font-size:20px;line-height:1.5;margin:0 auto 10px;max-width:470px;word-break:keep-all;">오늘의 글 제목</div>
-          <div id="cardNumber" class="card-number">영역확장 No.001</div>
-
-          <div class="metric">
-            <div class="metric-label">영역 확장도</div>
-            <div id="cardExpand" class="metric-value">★★★☆☆</div>
+        <div class="field">
+          <label for="body">본문</label>
+          <textarea id="body" placeholder="오늘 있었던 일, 떠오른 생각, 기억하고 싶은 장면부터 써보세요."></textarea>
+          <div class="helper">
+            <span>입력하는 동안 이 브라우저에 자동 저장돼요.</span>
+            <span id="count">0자</span>
           </div>
-          <div class="metric">
-            <div class="metric-label">즐거움</div>
-            <div id="cardJoy" class="metric-value">★★★★☆</div>
+        </div>
+
+        <h2 class="section-title" style="margin-top:26px;">오늘의 기록</h2>
+
+        <div class="row">
+          <div class="field">
+            <label for="number">번호</label>
+            <input id="number" type="number" min="1" value="1" />
           </div>
+          <div class="field">
+            <label for="area">오늘의 영역</label>
+            <input id="area" list="areas" placeholder="예: 웹 만들기" />
+            <datalist id="areas">
+              <option value="글쓰기"></option>
+              <option value="웹 만들기"></option>
+              <option value="돈 관리"></option>
+              <option value="식물"></option>
+              <option value="공부"></option>
+              <option value="정리"></option>
+              <option value="생활"></option>
+            </datalist>
+          </div>
+        </div>
 
-          <div id="cardLine" class="quote">오늘의 발견을 한 줄로 남겨보자.</div>
+        <div class="row">
+          <fieldset class="field" style="border:0;padding:0;margin-left:0;margin-right:0;">
+            <legend>영역 확장도</legend>
+            <div class="stars">
+              <input type="radio" id="e5" name="expand" value="5"><label for="e5"></label>
+              <input type="radio" id="e4" name="expand" value="4"><label for="e4"></label>
+              <input type="radio" id="e3" name="expand" value="3" checked><label for="e3"></label>
+              <input type="radio" id="e2" name="expand" value="2"><label for="e2"></label>
+              <input type="radio" id="e1" name="expand" value="1"><label for="e1"></label>
+            </div>
+          </fieldset>
 
-          <div class="again"><b>다시 해보고 싶은가?</b><br><span id="cardAgain">예</span></div>
-          <div class="next"><b>다음에 넓혀보고 싶은 영역</b><br><span id="cardNext">천천히 생각해 보기</span></div>
+          <fieldset class="field" style="border:0;padding:0;margin-left:0;margin-right:0;">
+            <legend>즐거움</legend>
+            <div class="stars">
+              <input type="radio" id="j5" name="joy" value="5"><label for="j5"></label>
+              <input type="radio" id="j4" name="joy" value="4" checked><label for="j4"></label>
+              <input type="radio" id="j3" name="joy" value="3"><label for="j3"></label>
+              <input type="radio" id="j2" name="joy" value="2"><label for="j2"></label>
+              <input type="radio" id="j1" name="joy" value="1"><label for="j1"></label>
+            </div>
+          </fieldset>
+        </div>
 
-          <div style="margin-top:34px;text-align:center;color:#4d684f;font-size:18px;font-weight:800;">오늘도 조금, 영역이 넓어졌다.</div>
+        <div class="field">
+          <label for="line">오늘의 한 줄</label>
+          <textarea id="line" style="min-height:92px;" placeholder="오늘을 가장 잘 설명하는 문장 하나"></textarea>
+        </div>
+
+        <div class="field">
+          <label>다시 해보고 싶은가?</label>
+          <div class="choice">
+            <label><input type="radio" name="again" value="예">예</label>
+            <label><input type="radio" name="again" value="아마도" checked>아마도</label>
+            <label><input type="radio" name="again" value="아니오">아니오</label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="next">다음에 해보고 싶은 것</label>
+          <input id="next" placeholder="다음 기록으로 이어질 작은 행동" />
+        </div>
+
+        <div class="actions">
+          <button class="primary" id="copyBlog" type="button">블로그 글 복사</button>
+          <button class="soft" id="download" type="button">카드 PNG 저장</button>
+          <button class="plain" id="saveNow" type="button">지금 저장</button>
+          <button class="danger" id="newDraft" type="button">새 글 시작</button>
+        </div>
+
+        <div class="notice" id="notice" aria-live="polite"></div>
+      </section>
+
+      <aside class="panel preview">
+        <h2 class="section-title">대표 이미지 미리보기</h2>
+        <article class="card">
+          <div class="brand">HAPPY AREA HUMAN</div>
+          <div class="icon" id="cardIcon">🌱</div>
+          <div class="area" id="cardArea">오늘의 영역</div>
+          <div class="post-title" id="cardTitle">오늘의 글 제목</div>
+          <div class="number" id="cardNumber">영역확장 No.001</div>
+
+          <div class="metric"><b>영역 확장도</b><span id="cardExpand">★★★☆☆</span></div>
+          <div class="metric"><b>즐거움</b><span id="cardJoy">★★★★☆</span></div>
+
+          <div class="quote" id="cardLine">오늘의 한 줄이 여기에 보여요.</div>
+
+          <div class="meta"><b>다시 해보고 싶은가?</b><br><span id="cardAgain">아마도</span></div>
+          <div class="meta"><b>다음에 해보고 싶은 것</b><br><span id="cardNext">천천히 생각해 보기</span></div>
+
+          <div class="ending">오늘도 조금, 영역이 넓어졌다.</div>
           <div class="signature">행복한영역인가 · 영역확장 이야기</div>
         </article>
-      </div>
+      </aside>
+    </div>
 
-      <canvas id="exportCanvas" width="1080" height="1350"></canvas>
-      <div id="notice" class="notice" aria-live="polite"></div>
-      <div class="tiny">이미지는 1080 × 1350px PNG로 만들어져요. 입력 내용은 서버로 전송되지 않아요.</div>
-    </section>
+    <canvas id="exportCanvas" width="1080" height="1350"></canvas>
   </main>
 
 <script>
   const $ = (s) => document.querySelector(s);
-  const checkedValue = (name) =>
-    document.querySelector(`input[name="${name}"]:checked`)?.value || "";
+  const STORAGE_KEY = "todayAreaDraftV2";
+  let saveTimer;
 
-  function stars(value) {
-    const n = Number(value || 0);
+  function selected(name){
+    return document.querySelector(`input[name="${name}"]:checked`)?.value || "";
+  }
+
+  function stars(n){
+    n = Number(n || 0);
     return "★".repeat(n) + "☆".repeat(5 - n);
   }
 
-  const iconMap = [
-    { keys: ["돈", "재테크", "금융", "신용", "빚"], icon: "💰" },
-    { keys: ["글", "작가", "블로그"], icon: "✍️" },
-    { keys: ["책", "독서"], icon: "📚" },
-    { keys: ["산책", "걷기"], icon: "🚶" },
-    { keys: ["식물", "화분", "정원"], icon: "🪴" },
-    { keys: ["집", "미니멀", "정리"], icon: "🏡" },
-    { keys: ["카페", "커피"], icon: "☕" },
-    { keys: ["공부", "배움"], icon: "💡" },
-    { keys: ["사람", "관계"], icon: "❤️" },
-    { keys: ["장소", "여행", "동네"], icon: "🌍" }
-  ];
-
-  function findIcon(area) {
-    const text = (area || "").toLowerCase();
-    for (const item of iconMap) {
-      if (item.keys.some(k => text.includes(k))) return item.icon;
+  function iconFor(area){
+    const t = (area || "").toLowerCase();
+    const rules = [
+      [["돈","금융","신용","빚"],"💰"],
+      [["글","블로그","작가"],"✍️"],
+      [["웹","코드","개발"],"💻"],
+      [["책","독서"],"📚"],
+      [["식물","화분"],"🪴"],
+      [["정리","미니멀","집"],"🏡"],
+      [["공부","배움"],"💡"],
+      [["산책","걷기"],"🚶"],
+      [["사람","관계"],"❤️"]
+    ];
+    for(const [keys,icon] of rules){
+      if(keys.some(k=>t.includes(k))) return icon;
     }
     return "🌱";
   }
 
-  function values() {
+  function data(){
     return {
+      title: $("#title").value.trim(),
+      body: $("#body").value,
       number: $("#number").value || "1",
-      postTitle: $("#postTitle").value.trim() || "오늘의 글 제목",
-      area: $("#area").value.trim() || "아직 이름 붙이지 못한 영역",
-      expand: checkedValue("expand"),
-      joy: checkedValue("joy"),
-      line: $("#line").value.trim() || "오늘의 발견을 한 줄로 남겨보자.",
-      again: checkedValue("again"),
-      next: $("#next").value.trim() || "천천히 생각해 보기"
+      area: $("#area").value.trim(),
+      expand: selected("expand"),
+      joy: selected("joy"),
+      line: $("#line").value.trim(),
+      again: selected("again"),
+      next: $("#next").value.trim()
     };
   }
 
-  function makeCard() {
-    const v = values();
-    $("#cardIcon").textContent = findIcon(v.area);
-    $("#cardArea").textContent = v.area;
-    $("#cardPostTitle").textContent = v.postTitle;
-    $("#cardNumber").textContent = `영역확장 No.${String(v.number).padStart(3, "0")}`;
-    $("#cardExpand").textContent = stars(v.expand);
-    $("#cardJoy").textContent = stars(v.joy);
-    $("#cardLine").textContent = v.line;
-    $("#cardAgain").textContent = v.again;
-    $("#cardNext").textContent = v.next;
-    localStorage.setItem("areaExpansionNumber", v.number);
-    $("#notice").textContent = "카드를 새로 만들었어요.";
+  function updatePreview(){
+    const d = data();
+    $("#cardIcon").textContent = iconFor(d.area);
+    $("#cardArea").textContent = d.area || "오늘의 영역";
+    $("#cardTitle").textContent = d.title || "오늘의 글 제목";
+    $("#cardNumber").textContent = `영역확장 No.${String(d.number).padStart(3,"0")}`;
+    $("#cardExpand").textContent = stars(d.expand);
+    $("#cardJoy").textContent = stars(d.joy);
+    $("#cardLine").textContent = d.line || "오늘의 한 줄이 여기에 보여요.";
+    $("#cardAgain").textContent = d.again || "아마도";
+    $("#cardNext").textContent = d.next || "천천히 생각해 보기";
+    $("#count").textContent = `${d.body.replace(/\s/g,"").length}자`;
   }
 
-
-  function resetNumber() {
-    localStorage.setItem("areaExpansionNumber", "1");
-    $("#number").value = 1;
-    makeCard();
-    $("#notice").textContent = "번호를 No.001부터 다시 시작했어요.";
+  function save(showNotice=false){
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data()));
+    $("#saveStatus").textContent = "자동 저장됨";
+    if(showNotice) $("#notice").textContent = "현재 글을 이 브라우저에 저장했어요.";
   }
 
-  function roundedRect(ctx, x, y, w, h, r) {
-    const radius = Math.min(r, w/2, h/2);
+  function scheduleSave(){
+    $("#saveStatus").textContent = "저장 중…";
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(()=>save(false), 400);
+  }
+
+  function setRadio(name,value){
+    const el = document.querySelector(`input[name="${name}"][value="${value}"]`);
+    if(el) el.checked = true;
+  }
+
+  function load(){
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw){
+      const last = Number(localStorage.getItem("lastAreaNumber") || "0");
+      $("#number").value = last + 1;
+      updatePreview();
+      return;
+    }
+    try{
+      const d = JSON.parse(raw);
+      $("#title").value = d.title || "";
+      $("#body").value = d.body || "";
+      $("#number").value = d.number || 1;
+      $("#area").value = d.area || "";
+      $("#line").value = d.line || "";
+      $("#next").value = d.next || "";
+      setRadio("expand",d.expand || "3");
+      setRadio("joy",d.joy || "4");
+      setRadio("again",d.again || "아마도");
+    }catch(e){}
+    updatePreview();
+  }
+
+  async function copyBlog(){
+    const d = data();
+    const summary =
+`오늘의 영역: ${d.area || ""}
+영역 확장도: ${stars(d.expand)}
+즐거움: ${stars(d.joy)}
+오늘의 한 줄: ${d.line || ""}
+다시 해보고 싶은가?: ${d.again || ""}
+다음에 해보고 싶은 것: ${d.next || ""}`;
+
+    const text =
+`${d.title || "제목"}
+
+${d.body}
+
+────────────
+
+${summary}`;
+
+    try{
+      await navigator.clipboard.writeText(text);
+      $("#notice").textContent = "제목·본문·오늘의 기록을 복사했어요.";
+    }catch(e){
+      $("#notice").textContent = "복사가 막혔어요. 브라우저에서 클립보드 권한을 확인해 주세요.";
+    }
+  }
+
+  function newDraft(){
+    const hasText = $("#title").value.trim() || $("#body").value.trim() || $("#line").value.trim();
+    if(hasText && !confirm("현재 글을 비우고 새 글을 시작할까요?")) return;
+    const current = Number($("#number").value || 1);
+    localStorage.setItem("lastAreaNumber", String(current));
+    localStorage.removeItem(STORAGE_KEY);
+    $("#title").value = "";
+    $("#body").value = "";
+    $("#number").value = current + 1;
+    $("#area").value = "";
+    $("#line").value = "";
+    $("#next").value = "";
+    setRadio("expand","3");
+    setRadio("joy","4");
+    setRadio("again","아마도");
+    save(false);
+    updatePreview();
+    $("#notice").textContent = `새 글 No.${String(current+1).padStart(3,"0")}을 시작했어요.`;
+    $("#title").focus();
+  }
+
+  function roundedRect(ctx,x,y,w,h,r){
     ctx.beginPath();
-    ctx.moveTo(x+radius, y);
-    ctx.arcTo(x+w, y, x+w, y+h, radius);
-    ctx.arcTo(x+w, y+h, x, y+h, radius);
-    ctx.arcTo(x, y+h, x, y, radius);
-    ctx.arcTo(x, y, x+w, y, radius);
+    ctx.roundRect(x,y,w,h,r);
     ctx.closePath();
   }
 
-  function wrapText(ctx, text, x, y, maxWidth, lineHeight, maxLines=99) {
-    const chars = [...text];
-    let line = "";
-    let lines = [];
-    for (const ch of chars) {
-      const test = line + ch;
-      if (ctx.measureText(test).width > maxWidth && line) {
-        lines.push(line);
-        line = ch;
-      } else {
-        line = test;
-      }
+  function wrapText(ctx,text,x,y,maxWidth,lineHeight,maxLines=99){
+    const chars=[...text];
+    let line="", lines=[];
+    for(const ch of chars){
+      const test=line+ch;
+      if(ctx.measureText(test).width>maxWidth && line){
+        lines.push(line); line=ch;
+      }else line=test;
     }
-    if (line) lines.push(line);
-    lines = lines.slice(0, maxLines);
-    lines.forEach((ln, i) => ctx.fillText(ln, x, y + i * lineHeight));
-    return y + lines.length * lineHeight;
+    if(line) lines.push(line);
+    lines=lines.slice(0,maxLines);
+    lines.forEach((ln,i)=>ctx.fillText(ln,x,y+i*lineHeight));
+    return y+lines.length*lineHeight;
   }
 
-  function drawCanvas() {
-    makeCard();
-    const v = values();
-    const c = $("#exportCanvas");
-    const ctx = c.getContext("2d");
-    const W = c.width, H = c.height;
-
+  function drawCanvas(){
+    const d=data();
+    const c=$("#exportCanvas");
+    const ctx=c.getContext("2d");
+    const W=c.width,H=c.height;
     ctx.clearRect(0,0,W,H);
-    ctx.fillStyle = "#f7f4ec";
-    ctx.fillRect(0,0,W,H);
+    ctx.fillStyle="#f6f3ec";ctx.fillRect(0,0,W,H);
 
-    const grad = ctx.createRadialGradient(160, 130, 10, 160, 130, 360);
-    grad.addColorStop(0, "rgba(197,221,197,.82)");
-    grad.addColorStop(1, "rgba(197,221,197,0)");
-    ctx.fillStyle = grad;
-    ctx.fillRect(0,0,W,H);
+    const g1=ctx.createRadialGradient(150,120,10,150,120,330);
+    g1.addColorStop(0,"rgba(199,220,194,.85)");
+    g1.addColorStop(1,"rgba(199,220,194,0)");
+    ctx.fillStyle=g1;ctx.fillRect(0,0,W,H);
 
-    const grad2 = ctx.createRadialGradient(960, 1200, 10, 960, 1200, 360);
-    grad2.addColorStop(0, "rgba(246,215,173,.80)");
-    grad2.addColorStop(1, "rgba(246,215,173,0)");
-    ctx.fillStyle = grad2;
-    ctx.fillRect(0,0,W,H);
+    const g2=ctx.createRadialGradient(960,1220,10,960,1220,340);
+    g2.addColorStop(0,"rgba(244,220,186,.82)");
+    g2.addColorStop(1,"rgba(244,220,186,0)");
+    ctx.fillStyle=g2;ctx.fillRect(0,0,W,H);
 
-    ctx.fillStyle = "#fffdf8";
-    roundedRect(ctx, 55, 55, 970, 1240, 44);
-    ctx.fill();
+    ctx.fillStyle="#fffdf8";
+    roundedRect(ctx,55,55,970,1240,44);ctx.fill();
 
-    ctx.strokeStyle = "rgba(77,104,79,.25)";
-    ctx.lineWidth = 2;
-    roundedRect(ctx, 85, 85, 910, 1180, 32);
-    ctx.stroke();
+    ctx.strokeStyle="rgba(88,113,90,.25)";
+    ctx.lineWidth=2;
+    roundedRect(ctx,84,84,912,1182,30);ctx.stroke();
 
-    ctx.textAlign = "center";
-    ctx.fillStyle = "#4d684f";
-    ctx.font = '700 28px "Noto Sans KR", sans-serif';
-    ctx.fillText("HAPPY AREA HUMAN", W/2, 145);
+    ctx.textAlign="center";
+    ctx.fillStyle="#58715a";
+    ctx.font='800 28px "Noto Sans KR", sans-serif';
+    ctx.fillText("HAPPY AREA HUMAN",W/2,145);
 
-    ctx.font = '54px "Noto Sans KR", sans-serif';
-    ctx.fillText(findIcon(v.area), W/2, 220);
+    ctx.font='54px "Noto Sans KR", sans-serif';
+    ctx.fillText(iconFor(d.area),W/2,225);
 
-    ctx.fillStyle = "#24231f";
-    ctx.font = '800 54px "Noto Sans KR", sans-serif';
-    wrapText(ctx, v.area, W/2, 300, 780, 68, 2);
+    ctx.fillStyle="#2b2a27";
+    ctx.font='800 56px "Noto Sans KR", sans-serif';
+    wrapText(ctx,d.area||"오늘의 영역",W/2,300,760,68,2);
 
-    ctx.fillStyle = "#4b4943";
-    ctx.font = '600 30px "Noto Sans KR", sans-serif';
-    wrapText(ctx, v.postTitle, W/2, 390, 780, 44, 2);
+    ctx.fillStyle="#4b4943";
+    ctx.font='650 31px "Noto Sans KR", sans-serif';
+    wrapText(ctx,d.title||"오늘의 글 제목",W/2,390,780,45,2);
 
-    ctx.fillStyle = "#77736b";
-    ctx.font = '400 24px "Noto Sans KR", sans-serif';
-    ctx.fillText(`영역확장 No.${String(v.number).padStart(3, "0")}`, W/2, 475);
+    ctx.fillStyle="#7b776f";
+    ctx.font='400 24px "Noto Sans KR", sans-serif';
+    ctx.fillText(`영역확장 No.${String(d.number).padStart(3,"0")}`,W/2,480);
 
-    ctx.textAlign = "left";
-    ctx.strokeStyle = "rgba(77,104,79,.16)";
-    ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.moveTo(150, 410); ctx.lineTo(930, 410); ctx.stroke();
+    ctx.strokeStyle="rgba(88,113,90,.18)";
+    ctx.beginPath();ctx.moveTo(145,525);ctx.lineTo(935,525);ctx.stroke();
 
-    ctx.fillStyle = "#4d684f";
-    ctx.font = '700 29px "Noto Sans KR", sans-serif';
-    ctx.fillText("영역 확장도", 160, 480);
-    ctx.fillStyle = "#d7a02d";
-    ctx.font = '800 39px "Noto Sans KR", sans-serif';
-    ctx.fillText(stars(v.expand), 470, 480);
+    ctx.textAlign="left";
+    ctx.fillStyle="#58715a";
+    ctx.font='800 29px "Noto Sans KR", sans-serif';
+    ctx.fillText("영역 확장도",155,595);
+    ctx.fillText("즐거움",155,700);
 
-    ctx.beginPath(); ctx.moveTo(150, 525); ctx.lineTo(930, 525); ctx.stroke();
+    ctx.font='800 38px "Noto Sans KR", sans-serif';
+    ctx.fillText(stars(d.expand),480,595);
+    ctx.fillText(stars(d.joy),480,700);
 
-    ctx.fillStyle = "#4d684f";
-    ctx.font = '700 29px "Noto Sans KR", sans-serif';
-    ctx.fillText("즐거움", 160, 595);
-    ctx.fillStyle = "#d7a02d";
-    ctx.font = '800 39px "Noto Sans KR", sans-serif';
-    ctx.fillText(stars(v.joy), 470, 595);
+    ctx.fillStyle="rgba(255,255,255,.8)";
+    roundedRect(ctx,125,760,830,250,30);ctx.fill();
+    ctx.strokeStyle="rgba(88,113,90,.18)";ctx.stroke();
 
-    ctx.fillStyle = "rgba(255,255,255,.78)";
-    roundedRect(ctx, 135, 650, 810, 250, 28);
-    ctx.fill();
-    ctx.strokeStyle = "rgba(77,104,79,.16)";
-    ctx.stroke();
+    ctx.textAlign="center";
+    ctx.fillStyle="#2b2a27";
+    ctx.font='700 38px "Noto Sans KR", sans-serif';
+    wrapText(ctx,d.line||"오늘의 한 줄이 여기에 보여요.",W/2,845,700,58,3);
 
-    ctx.textAlign = "center";
-    ctx.fillStyle = "#292821";
-    ctx.font = '600 38px "Noto Sans KR", sans-serif';
-    wrapText(ctx, v.line, W/2, 735, 680, 58, 3);
+    ctx.textAlign="left";
+    ctx.fillStyle="#58715a";
+    ctx.font='800 28px "Noto Sans KR", sans-serif';
+    ctx.fillText("다시 해보고 싶은가?",155,1080);
+    ctx.fillText("다음에 해보고 싶은 것",155,1170);
 
-    ctx.textAlign = "left";
-    ctx.fillStyle = "#4d684f";
-    ctx.font = '700 29px "Noto Sans KR", sans-serif';
-    ctx.fillText("다시 해보고 싶은가?", 155, 975);
-    ctx.fillStyle = "#292821";
-    ctx.font = '500 30px "Noto Sans KR", sans-serif';
-    ctx.fillText(v.again, 155, 1025);
+    ctx.fillStyle="#2b2a27";
+    ctx.font='500 29px "Noto Sans KR", sans-serif';
+    ctx.fillText(d.again||"아마도",155,1122);
+    wrapText(ctx,d.next||"천천히 생각해 보기",155,1212,760,42,2);
 
-    ctx.fillStyle = "#4d684f";
-    ctx.font = '700 29px "Noto Sans KR", sans-serif';
-    ctx.fillText("다음에 넓혀보고 싶은 영역", 155, 1100);
-    ctx.fillStyle = "#292821";
-    ctx.font = '500 30px "Noto Sans KR", sans-serif';
-    wrapText(ctx, v.next, 155, 1150, 760, 45, 2);
-
-    ctx.textAlign = "center";
-    ctx.fillStyle = "#77736b";
-    ctx.font = '400 23px "Noto Sans KR", sans-serif';
-    ctx.fillStyle = "#4d684f";
-    ctx.font = '800 26px "Noto Sans KR", sans-serif';
-    ctx.fillText("오늘도 조금, 영역이 넓어졌다.", W/2, 1240);
-
+    ctx.textAlign="center";
+    ctx.fillStyle="#58715a";
+    ctx.font='800 26px "Noto Sans KR", sans-serif';
+    ctx.fillText("오늘도 조금, 영역이 넓어졌다.",W/2,1280);
     return c;
   }
 
-  function downloadPng() {
-    const c = drawCanvas();
-    const link = document.createElement("a");
-    const n = String($("#number").value || "1").padStart(3, "0");
-    link.download = `영역확장_${n}.png`;
-    link.href = c.toDataURL("image/png");
-    link.click();
-    $("#notice").textContent = "PNG 이미지로 저장했어요.";
+  function download(){
+    const c=drawCanvas();
+    const a=document.createElement("a");
+    const n=String($("#number").value||"1").padStart(3,"0");
+    a.download=`영역확장_${n}.png`;
+    a.href=c.toDataURL("image/png");
+    a.click();
+    $("#notice").textContent="카드 PNG를 저장했어요.";
   }
 
-  async function copyImage() {
-    const c = drawCanvas();
-    if (!navigator.clipboard || !window.ClipboardItem) {
-      $("#notice").textContent = "이 브라우저는 이미지 복사를 지원하지 않아요. PNG 저장하기를 이용해 주세요.";
-      return;
-    }
-    c.toBlob(async (blob) => {
-      try {
-        await navigator.clipboard.write([new ClipboardItem({"image/png": blob})]);
-        $("#notice").textContent = "이미지를 복사했어요. 네이버 블로그에 붙여넣어 보세요.";
-      } catch (e) {
-        $("#notice").textContent = "브라우저가 이미지 복사를 막았어요. PNG 저장하기를 이용해 주세요.";
-      }
-    }, "image/png");
-  }
+  document.querySelectorAll("input,textarea").forEach(el=>{
+    el.addEventListener("input",()=>{updatePreview();scheduleSave();});
+    el.addEventListener("change",()=>{updatePreview();scheduleSave();});
+  });
 
-  $("#make").addEventListener("click", makeCard);
-  $("#resetNumber").addEventListener("click", resetNumber);
-  $("#download").addEventListener("click", downloadPng);
-  $("#copyImage").addEventListener("click", copyImage);
+  $("#copyBlog").addEventListener("click",copyBlog);
+  $("#download").addEventListener("click",download);
+  $("#saveNow").addEventListener("click",()=>save(true));
+  $("#newDraft").addEventListener("click",newDraft);
 
-  const saved = localStorage.getItem("areaExpansionNumber");
-  if (saved) $("#number").value = Number(saved) + 1;
-  makeCard();
+  load();
 </script>
 </body>
 </html>
