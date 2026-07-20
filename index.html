@@ -1,0 +1,547 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#f7f4ec" />
+  <title>영역확장 카드 만들기</title>
+  <style>
+    :root {
+      --bg: #f7f4ec;
+      --card: #fffdf8;
+      --text: #24231f;
+      --muted: #77736b;
+      --line: #e6dfd2;
+      --accent: #4d684f;
+      --accent-soft: #e8efe7;
+      --gold: #d7a02d;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", sans-serif;
+      line-height: 1.55;
+    }
+    .wrap {
+      width: min(760px, calc(100% - 28px));
+      margin: 28px auto 56px;
+    }
+    header { margin-bottom: 18px; }
+    h1 { margin: 0 0 6px; font-size: 28px; }
+    .intro { margin: 0; color: var(--muted); }
+    .panel {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(68, 57, 36, 0.06);
+    }
+    label, legend {
+      display: block;
+      margin: 0 0 7px;
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .field { margin-bottom: 18px; }
+    input, textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: #fff;
+      color: var(--text);
+      padding: 13px 14px;
+      font: inherit;
+      outline: none;
+    }
+    input:focus, textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-soft);
+    }
+    textarea { min-height: 92px; resize: vertical; }
+    .stars {
+      display: flex;
+      flex-direction: row-reverse;
+      justify-content: flex-end;
+      gap: 4px;
+    }
+    .stars input { display: none; }
+    .stars label {
+      margin: 0;
+      cursor: pointer;
+      font-size: 34px;
+      line-height: 1;
+      color: #d6d1c6;
+      user-select: none;
+    }
+    .stars label::before { content: "★"; }
+    .stars input:checked ~ label,
+    .stars label:hover,
+    .stars label:hover ~ label { color: var(--gold); }
+    .check-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .check-row label {
+      font-weight: 500;
+      background: #faf9f6;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 8px 12px;
+      cursor: pointer;
+    }
+    .check-row input { width: auto; margin-right: 5px; }
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 8px;
+    }
+    button {
+      border: 0;
+      border-radius: 14px;
+      padding: 14px 16px;
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .primary { background: var(--accent); color: white; }
+    .secondary { background: var(--accent-soft); color: #324934; }
+    .plain { background: #f3efe7; color: #4b473f; }
+    .preview-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 26px 0 12px;
+    }
+    .preview-title h2 { margin: 0; font-size: 18px; }
+
+    .image-card-wrap {
+      display: flex;
+      justify-content: center;
+      overflow: auto;
+      padding: 4px;
+    }
+    .image-card {
+      width: 640px;
+      min-height: 760px;
+      background:
+        radial-gradient(circle at 15% 8%, rgba(197, 221, 197, .55), transparent 24%),
+        radial-gradient(circle at 90% 88%, rgba(246, 215, 173, .55), transparent 25%),
+        var(--card);
+      border: 1px solid #ddd5c7;
+      border-radius: 34px;
+      padding: 54px 52px 46px;
+      box-shadow: 0 16px 40px rgba(71, 62, 45, .10);
+      position: relative;
+      color: #292821;
+    }
+    .image-card::before {
+      content: "";
+      position: absolute;
+      inset: 18px;
+      border: 1px solid rgba(77,104,79,.22);
+      border-radius: 24px;
+      pointer-events: none;
+    }
+    .card-kicker {
+      text-align: center;
+      font-weight: 800;
+      color: var(--accent);
+      letter-spacing: .08em;
+      font-size: 16px;
+    }
+    .card-title {
+      margin: 18px 0 6px;
+      text-align: center;
+      font-size: 38px;
+      line-height: 1.25;
+      word-break: keep-all;
+    }
+    .card-number {
+      text-align: center;
+      color: var(--muted);
+      margin-bottom: 34px;
+      font-size: 15px;
+    }
+    .metric {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      align-items: center;
+      gap: 16px;
+      padding: 18px 0;
+      border-top: 1px solid rgba(77,104,79,.16);
+    }
+    .metric-label {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--accent);
+    }
+    .metric-value {
+      font-size: 23px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      color: var(--gold);
+    }
+    .quote {
+      margin: 24px 0;
+      padding: 24px 26px;
+      border-radius: 20px;
+      background: rgba(255,255,255,.72);
+      border: 1px solid rgba(77,104,79,.16);
+      font-size: 22px;
+      line-height: 1.7;
+      text-align: center;
+      word-break: keep-all;
+    }
+    .again, .next {
+      margin-top: 16px;
+      font-size: 17px;
+      line-height: 1.7;
+    }
+    .again b, .next b { color: var(--accent); }
+    .signature {
+      margin-top: 38px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .notice {
+      min-height: 24px;
+      margin-top: 10px;
+      color: var(--accent);
+      font-weight: 700;
+      text-align: center;
+    }
+    .tiny {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 12px;
+      text-align: center;
+    }
+    #exportCanvas { display:none; }
+    @media (max-width: 680px) {
+      .buttons { grid-template-columns: 1fr; }
+      h1 { font-size: 24px; }
+      .image-card {
+        width: 100%;
+        min-height: 620px;
+        padding: 40px 28px 34px;
+      }
+      .card-title { font-size: 30px; }
+      .metric { grid-template-columns: 110px 1fr; }
+      .quote { font-size: 19px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header>
+      <h1>🌱 영역확장 카드 만들기</h1>
+      <p class="intro">입력하고 PNG 이미지로 저장하거나, 바로 복사해 네이버 블로그에 붙여넣어요.</p>
+    </header>
+
+    <section class="panel">
+      <div class="field">
+        <label for="number">영역확장 번호</label>
+        <input id="number" type="number" min="1" value="1" />
+      </div>
+
+      <div class="field">
+        <label for="area">오늘의 영역</label>
+        <input id="area" list="area-list" placeholder="예: 글쓰기, 산책, 식물" />
+        <datalist id="area-list">
+          <option value="글쓰기"></option>
+          <option value="책"></option>
+          <option value="산책"></option>
+          <option value="식물"></option>
+          <option value="미니멀라이프"></option>
+          <option value="새로운 장소"></option>
+          <option value="공부"></option>
+          <option value="돈 관리"></option>
+          <option value="바로 행동"></option>
+        </datalist>
+      </div>
+
+      <fieldset class="field" style="border:0;padding:0;margin-left:0;margin-right:0;">
+        <legend>영역 확장도</legend>
+        <div class="stars">
+          <input type="radio" id="expand5" name="expand" value="5"><label for="expand5"></label>
+          <input type="radio" id="expand4" name="expand" value="4"><label for="expand4"></label>
+          <input type="radio" id="expand3" name="expand" value="3" checked><label for="expand3"></label>
+          <input type="radio" id="expand2" name="expand" value="2"><label for="expand2"></label>
+          <input type="radio" id="expand1" name="expand" value="1"><label for="expand1"></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="field" style="border:0;padding:0;margin-left:0;margin-right:0;">
+        <legend>즐거움</legend>
+        <div class="stars">
+          <input type="radio" id="joy5" name="joy" value="5"><label for="joy5"></label>
+          <input type="radio" id="joy4" name="joy" value="4" checked><label for="joy4"></label>
+          <input type="radio" id="joy3" name="joy" value="3"><label for="joy3"></label>
+          <input type="radio" id="joy2" name="joy" value="2"><label for="joy2"></label>
+          <input type="radio" id="joy1" name="joy" value="1"><label for="joy1"></label>
+        </div>
+      </fieldset>
+
+      <div class="field">
+        <label for="line">오늘의 한 줄</label>
+        <textarea id="line" placeholder="예: 잘 쓰려고 하지 않으니 생각보다 즐거웠다."></textarea>
+      </div>
+
+      <div class="field">
+        <label>다시 해보고 싶은가?</label>
+        <div class="check-row">
+          <label><input type="radio" name="again" value="예" checked>예</label>
+          <label><input type="radio" name="again" value="아마도">아마도</label>
+          <label><input type="radio" name="again" value="아니오">아니오</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="next">다음에 넓혀보고 싶은 영역</label>
+        <input id="next" placeholder="예: 동네의 안 가본 길 걷기" />
+      </div>
+
+      <div class="buttons">
+        <button class="primary" id="make">카드 새로 만들기</button>
+        <button class="secondary" id="download">PNG 저장하기</button>
+        <button class="plain" id="copyImage">이미지 복사하기</button>
+      </div>
+
+      <div class="preview-title"><h2>이미지 미리보기</h2></div>
+
+      <div class="image-card-wrap">
+        <article id="card" class="image-card">
+          <div class="card-kicker">HAPPY AREA HUMAN</div>
+          <div id="cardArea" class="card-title">오늘의 영역</div>
+          <div id="cardNumber" class="card-number">영역확장 No.001</div>
+
+          <div class="metric">
+            <div class="metric-label">영역 확장도</div>
+            <div id="cardExpand" class="metric-value">★★★☆☆</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">즐거움</div>
+            <div id="cardJoy" class="metric-value">★★★★☆</div>
+          </div>
+
+          <div id="cardLine" class="quote">오늘의 발견을 한 줄로 남겨보자.</div>
+
+          <div class="again"><b>다시 해보고 싶은가?</b><br><span id="cardAgain">예</span></div>
+          <div class="next"><b>다음에 넓혀보고 싶은 영역</b><br><span id="cardNext">천천히 생각해 보기</span></div>
+
+          <div class="signature">행복한영역인가 · 영역확장 이야기</div>
+        </article>
+      </div>
+
+      <canvas id="exportCanvas" width="1080" height="1350"></canvas>
+      <div id="notice" class="notice" aria-live="polite"></div>
+      <div class="tiny">이미지는 1080 × 1350px PNG로 만들어져요. 입력 내용은 서버로 전송되지 않아요.</div>
+    </section>
+  </main>
+
+<script>
+  const $ = (s) => document.querySelector(s);
+  const checkedValue = (name) =>
+    document.querySelector(`input[name="${name}"]:checked`)?.value || "";
+
+  function stars(value) {
+    const n = Number(value || 0);
+    return "★".repeat(n) + "☆".repeat(5 - n);
+  }
+
+  function values() {
+    return {
+      number: $("#number").value || "1",
+      area: $("#area").value.trim() || "아직 이름 붙이지 못한 영역",
+      expand: checkedValue("expand"),
+      joy: checkedValue("joy"),
+      line: $("#line").value.trim() || "오늘의 발견을 한 줄로 남겨보자.",
+      again: checkedValue("again"),
+      next: $("#next").value.trim() || "천천히 생각해 보기"
+    };
+  }
+
+  function makeCard() {
+    const v = values();
+    $("#cardArea").textContent = v.area;
+    $("#cardNumber").textContent = `영역확장 No.${String(v.number).padStart(3, "0")}`;
+    $("#cardExpand").textContent = stars(v.expand);
+    $("#cardJoy").textContent = stars(v.joy);
+    $("#cardLine").textContent = v.line;
+    $("#cardAgain").textContent = v.again;
+    $("#cardNext").textContent = v.next;
+    localStorage.setItem("areaExpansionNumber", v.number);
+    $("#notice").textContent = "카드를 새로 만들었어요.";
+  }
+
+  function roundedRect(ctx, x, y, w, h, r) {
+    const radius = Math.min(r, w/2, h/2);
+    ctx.beginPath();
+    ctx.moveTo(x+radius, y);
+    ctx.arcTo(x+w, y, x+w, y+h, radius);
+    ctx.arcTo(x+w, y+h, x, y+h, radius);
+    ctx.arcTo(x, y+h, x, y, radius);
+    ctx.arcTo(x, y, x+w, y, radius);
+    ctx.closePath();
+  }
+
+  function wrapText(ctx, text, x, y, maxWidth, lineHeight, maxLines=99) {
+    const chars = [...text];
+    let line = "";
+    let lines = [];
+    for (const ch of chars) {
+      const test = line + ch;
+      if (ctx.measureText(test).width > maxWidth && line) {
+        lines.push(line);
+        line = ch;
+      } else {
+        line = test;
+      }
+    }
+    if (line) lines.push(line);
+    lines = lines.slice(0, maxLines);
+    lines.forEach((ln, i) => ctx.fillText(ln, x, y + i * lineHeight));
+    return y + lines.length * lineHeight;
+  }
+
+  function drawCanvas() {
+    makeCard();
+    const v = values();
+    const c = $("#exportCanvas");
+    const ctx = c.getContext("2d");
+    const W = c.width, H = c.height;
+
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle = "#f7f4ec";
+    ctx.fillRect(0,0,W,H);
+
+    const grad = ctx.createRadialGradient(160, 130, 10, 160, 130, 360);
+    grad.addColorStop(0, "rgba(197,221,197,.82)");
+    grad.addColorStop(1, "rgba(197,221,197,0)");
+    ctx.fillStyle = grad;
+    ctx.fillRect(0,0,W,H);
+
+    const grad2 = ctx.createRadialGradient(960, 1200, 10, 960, 1200, 360);
+    grad2.addColorStop(0, "rgba(246,215,173,.80)");
+    grad2.addColorStop(1, "rgba(246,215,173,0)");
+    ctx.fillStyle = grad2;
+    ctx.fillRect(0,0,W,H);
+
+    ctx.fillStyle = "#fffdf8";
+    roundedRect(ctx, 55, 55, 970, 1240, 44);
+    ctx.fill();
+
+    ctx.strokeStyle = "rgba(77,104,79,.25)";
+    ctx.lineWidth = 2;
+    roundedRect(ctx, 85, 85, 910, 1180, 32);
+    ctx.stroke();
+
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#4d684f";
+    ctx.font = '700 28px "Noto Sans KR", sans-serif';
+    ctx.fillText("HAPPY AREA HUMAN", W/2, 155);
+
+    ctx.fillStyle = "#24231f";
+    ctx.font = '800 58px "Noto Sans KR", sans-serif';
+    wrapText(ctx, v.area, W/2, 245, 780, 74, 2);
+
+    ctx.fillStyle = "#77736b";
+    ctx.font = '400 25px "Noto Sans KR", sans-serif';
+    ctx.fillText(`영역확장 No.${String(v.number).padStart(3, "0")}`, W/2, 355);
+
+    ctx.textAlign = "left";
+    ctx.strokeStyle = "rgba(77,104,79,.16)";
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(150, 410); ctx.lineTo(930, 410); ctx.stroke();
+
+    ctx.fillStyle = "#4d684f";
+    ctx.font = '700 29px "Noto Sans KR", sans-serif';
+    ctx.fillText("영역 확장도", 160, 480);
+    ctx.fillStyle = "#d7a02d";
+    ctx.font = '800 39px "Noto Sans KR", sans-serif';
+    ctx.fillText(stars(v.expand), 470, 480);
+
+    ctx.beginPath(); ctx.moveTo(150, 525); ctx.lineTo(930, 525); ctx.stroke();
+
+    ctx.fillStyle = "#4d684f";
+    ctx.font = '700 29px "Noto Sans KR", sans-serif';
+    ctx.fillText("즐거움", 160, 595);
+    ctx.fillStyle = "#d7a02d";
+    ctx.font = '800 39px "Noto Sans KR", sans-serif';
+    ctx.fillText(stars(v.joy), 470, 595);
+
+    ctx.fillStyle = "rgba(255,255,255,.78)";
+    roundedRect(ctx, 135, 650, 810, 250, 28);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(77,104,79,.16)";
+    ctx.stroke();
+
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#292821";
+    ctx.font = '600 38px "Noto Sans KR", sans-serif';
+    wrapText(ctx, v.line, W/2, 735, 680, 58, 3);
+
+    ctx.textAlign = "left";
+    ctx.fillStyle = "#4d684f";
+    ctx.font = '700 29px "Noto Sans KR", sans-serif';
+    ctx.fillText("다시 해보고 싶은가?", 155, 975);
+    ctx.fillStyle = "#292821";
+    ctx.font = '500 30px "Noto Sans KR", sans-serif';
+    ctx.fillText(v.again, 155, 1025);
+
+    ctx.fillStyle = "#4d684f";
+    ctx.font = '700 29px "Noto Sans KR", sans-serif';
+    ctx.fillText("다음에 넓혀보고 싶은 영역", 155, 1100);
+    ctx.fillStyle = "#292821";
+    ctx.font = '500 30px "Noto Sans KR", sans-serif';
+    wrapText(ctx, v.next, 155, 1150, 760, 45, 2);
+
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#77736b";
+    ctx.font = '400 23px "Noto Sans KR", sans-serif';
+    ctx.fillText("행복한영역인가 · 영역확장 이야기", W/2, 1240);
+
+    return c;
+  }
+
+  function downloadPng() {
+    const c = drawCanvas();
+    const link = document.createElement("a");
+    const n = String($("#number").value || "1").padStart(3, "0");
+    link.download = `영역확장_${n}.png`;
+    link.href = c.toDataURL("image/png");
+    link.click();
+    $("#notice").textContent = "PNG 이미지로 저장했어요.";
+  }
+
+  async function copyImage() {
+    const c = drawCanvas();
+    if (!navigator.clipboard || !window.ClipboardItem) {
+      $("#notice").textContent = "이 브라우저는 이미지 복사를 지원하지 않아요. PNG 저장하기를 이용해 주세요.";
+      return;
+    }
+    c.toBlob(async (blob) => {
+      try {
+        await navigator.clipboard.write([new ClipboardItem({"image/png": blob})]);
+        $("#notice").textContent = "이미지를 복사했어요. 네이버 블로그에 붙여넣어 보세요.";
+      } catch (e) {
+        $("#notice").textContent = "브라우저가 이미지 복사를 막았어요. PNG 저장하기를 이용해 주세요.";
+      }
+    }, "image/png");
+  }
+
+  $("#make").addEventListener("click", makeCard);
+  $("#download").addEventListener("click", downloadPng);
+  $("#copyImage").addEventListener("click", copyImage);
+
+  const saved = localStorage.getItem("areaExpansionNumber");
+  if (saved) $("#number").value = Number(saved) + 1;
+  makeCard();
+</script>
+</body>
+</html>
