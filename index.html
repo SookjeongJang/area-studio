@@ -139,6 +139,7 @@
       gap:10px;
       margin-top:8px;
     }
+    .actions button:last-child{grid-column:1/-1}
     button{
       border:0;
       border-radius:14px;
@@ -159,7 +160,7 @@
       min-height:560px;
       border-radius:28px;
       border:1px solid #d9dfd5;
-      padding:38px 34px 30px;
+      padding:34px 34px 28px;
       background:
         radial-gradient(circle at 10% 8%,rgba(199,220,194,.8),transparent 25%),
         radial-gradient(circle at 95% 92%,rgba(244,220,186,.75),transparent 26%),
@@ -179,22 +180,22 @@
       text-align:center;
       color:var(--green);
       font-weight:900;
-      letter-spacing:.12em;
-      font-size:12px;
+      letter-spacing:.02em;
+      font-size:14px;
       position:relative;
     }
     .icon{
       text-align:center;
-      font-size:38px;
-      margin-top:15px;
+      font-size:34px;
+      margin-top:10px;
       position:relative;
     }
     .area{
       text-align:center;
-      font-size:34px;
+      font-size:32px;
       font-weight:900;
-      line-height:1.25;
-      margin-top:2px;
+      line-height:1.22;
+      margin-top:0;
       position:relative;
       word-break:keep-all;
     }
@@ -202,10 +203,10 @@
       text-align:center;
       color:#4b4943;
       font-size:17px;
-      font-weight:700;
-      line-height:1.5;
-      margin:10px auto 0;
-      max-width:90%;
+      font-weight:750;
+      line-height:1.45;
+      margin:12px auto 0;
+      max-width:88%;
       position:relative;
       word-break:keep-all;
     }
@@ -216,38 +217,56 @@
       margin-top:7px;
       position:relative;
     }
+    .metrics{
+      margin-top:18px;
+      padding:12px 0;
+      border-top:1px solid rgba(88,113,90,.18);
+      border-bottom:1px solid rgba(88,113,90,.18);
+    }
     .metric{
       display:grid;
       grid-template-columns:110px 1fr;
       gap:12px;
-      border-top:1px solid rgba(88,113,90,.18);
-      padding:15px 4px;
+      padding:8px 4px;
       position:relative;
     }
-    .metric:first-of-type{margin-top:22px}
     .metric b{color:var(--green);font-size:13px}
     .metric span{color:var(--green);font-weight:900;letter-spacing:.08em}
     .quote{
-      margin:18px 0;
-      padding:20px 18px;
+      margin:16px 0 14px;
+      min-height:126px;
+      padding:18px 18px;
       border:1px solid rgba(88,113,90,.18);
       border-radius:18px;
       background:rgba(255,255,255,.76);
+      display:flex;
+      align-items:center;
+      justify-content:center;
       text-align:center;
-      font-size:22px;
+      font-size:21px;
       font-weight:850;
-      line-height:1.55;
+      line-height:1.5;
       position:relative;
       word-break:keep-all;
     }
+    .meta-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+      position:relative;
+    }
     .meta{
-      margin-top:12px;
-      font-size:14px;
+      margin-top:0;
+      min-height:88px;
+      padding:12px 13px;
+      border-radius:14px;
+      background:rgba(234,240,231,.58);
+      font-size:13px;
       position:relative;
     }
     .meta b{color:var(--green)}
     .ending{
-      margin-top:26px;
+      margin-top:18px;
       text-align:center;
       color:var(--green);
       font-weight:800;
@@ -382,7 +401,8 @@
 
         <div class="actions">
           <button class="primary" id="copyBlog" type="button">블로그 글 복사</button>
-          <button class="soft" id="download" type="button">카드 PNG 저장</button>
+          <button class="soft" id="copyImage" type="button">카드 이미지 복사</button>
+          <button class="plain" id="download" type="button">카드 PNG 저장</button>
           <button class="plain" id="saveNow" type="button">지금 저장</button>
           <button class="danger" id="newDraft" type="button">새 글 시작</button>
         </div>
@@ -393,21 +413,25 @@
       <aside class="panel preview">
         <h2 class="section-title">대표 이미지 미리보기</h2>
         <article class="card">
-          <div class="brand">HAPPY AREA HUMAN</div>
+          <div class="brand">@행복한영역인가</div>
           <div class="icon" id="cardIcon">🌱</div>
           <div class="area" id="cardArea">오늘의 영역</div>
           <div class="post-title" id="cardTitle">오늘의 글 제목</div>
           <div class="number" id="cardNumber">영역확장 No.001</div>
 
-          <div class="metric"><b>영역 확장도</b><span id="cardExpand">★★★☆☆</span></div>
-          <div class="metric"><b>즐거움</b><span id="cardJoy">★★★★☆</span></div>
+          <div class="metrics">
+            <div class="metric"><b>영역 확장도</b><span id="cardExpand">★★★☆☆</span></div>
+            <div class="metric"><b>즐거움</b><span id="cardJoy">★★★★☆</span></div>
+          </div>
 
           <div class="quote" id="cardLine">오늘의 한 줄이 여기에 보여요.</div>
 
-          <div class="meta"><b>다시 해보고 싶은가?</b><br><span id="cardAgain">아마도</span></div>
-          <div class="meta"><b>다음에 해보고 싶은 것</b><br><span id="cardNext">천천히 생각해 보기</span></div>
+          <div class="meta-grid">
+            <div class="meta"><b>다시 해보고 싶은가?</b><br><span id="cardAgain">아마도</span></div>
+            <div class="meta"><b>다음에 해보고 싶은 것</b><br><span id="cardNext">천천히 생각해 보기</span></div>
+          </div>
 
-          <div class="ending">오늘도 조금, 영역이 넓어졌다.</div>
+          <div class="ending">오늘도 땅따먹기 성공!</div>
           <div class="signature">행복한영역인가 · 영역확장 이야기</div>
         </article>
       </aside>
@@ -613,62 +637,86 @@ ${summary}`;
 
     ctx.textAlign="center";
     ctx.fillStyle="#58715a";
-    ctx.font='800 28px "Noto Sans KR", sans-serif';
-    ctx.fillText("HAPPY AREA HUMAN",W/2,145);
+    ctx.font='800 27px "Noto Sans KR", sans-serif';
+    ctx.fillText("@행복한영역인가",W/2,138);
 
-    ctx.font='54px "Noto Sans KR", sans-serif';
-    ctx.fillText(iconFor(d.area),W/2,225);
+    ctx.font='50px "Noto Sans KR", sans-serif';
+    ctx.fillText(iconFor(d.area),W/2,210);
 
     ctx.fillStyle="#2b2a27";
-    ctx.font='800 56px "Noto Sans KR", sans-serif';
-    wrapText(ctx,d.area||"오늘의 영역",W/2,300,760,68,2);
+    ctx.font='800 54px "Noto Sans KR", sans-serif';
+    wrapText(ctx,d.area||"오늘의 영역",W/2,282,760,64,2);
 
     ctx.fillStyle="#4b4943";
-    ctx.font='650 31px "Noto Sans KR", sans-serif';
-    wrapText(ctx,d.title||"오늘의 글 제목",W/2,390,780,45,2);
+    ctx.font='700 30px "Noto Sans KR", sans-serif';
+    wrapText(ctx,d.title||"오늘의 글 제목",W/2,375,770,43,2);
 
     ctx.fillStyle="#7b776f";
-    ctx.font='400 24px "Noto Sans KR", sans-serif';
-    ctx.fillText(`영역확장 No.${String(d.number).padStart(3,"0")}`,W/2,480);
+    ctx.font='400 23px "Noto Sans KR", sans-serif';
+    ctx.fillText(`영역확장 No.${String(d.number).padStart(3,"0")}`,W/2,463);
 
     ctx.strokeStyle="rgba(88,113,90,.18)";
-    ctx.beginPath();ctx.moveTo(145,525);ctx.lineTo(935,525);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(145,505);ctx.lineTo(935,505);ctx.stroke();
 
     ctx.textAlign="left";
     ctx.fillStyle="#58715a";
-    ctx.font='800 29px "Noto Sans KR", sans-serif';
-    ctx.fillText("영역 확장도",155,595);
-    ctx.fillText("즐거움",155,700);
+    ctx.font='800 28px "Noto Sans KR", sans-serif';
+    ctx.fillText("영역 확장도",155,565);
+    ctx.fillText("즐거움",155,640);
 
-    ctx.font='800 38px "Noto Sans KR", sans-serif';
-    ctx.fillText(stars(d.expand),480,595);
-    ctx.fillText(stars(d.joy),480,700);
+    ctx.font='800 37px "Noto Sans KR", sans-serif';
+    ctx.fillText(stars(d.expand),480,565);
+    ctx.fillText(stars(d.joy),480,640);
 
-    ctx.fillStyle="rgba(255,255,255,.8)";
-    roundedRect(ctx,125,760,830,250,30);ctx.fill();
+    ctx.beginPath();ctx.moveTo(145,680);ctx.lineTo(935,680);ctx.stroke();
+
+    ctx.fillStyle="rgba(255,255,255,.82)";
+    roundedRect(ctx,125,720,830,245,30);ctx.fill();
     ctx.strokeStyle="rgba(88,113,90,.18)";ctx.stroke();
 
     ctx.textAlign="center";
     ctx.fillStyle="#2b2a27";
-    ctx.font='700 38px "Noto Sans KR", sans-serif';
-    wrapText(ctx,d.line||"오늘의 한 줄이 여기에 보여요.",W/2,845,700,58,3);
+    ctx.font='700 37px "Noto Sans KR", sans-serif';
+    wrapText(ctx,d.line||"오늘의 한 줄이 여기에 보여요.",W/2,802,700,56,3);
+
+    ctx.fillStyle="rgba(234,240,231,.58)";
+    roundedRect(ctx,125,1005,395,155,24);ctx.fill();
+    roundedRect(ctx,560,1005,395,155,24);ctx.fill();
 
     ctx.textAlign="left";
     ctx.fillStyle="#58715a";
-    ctx.font='800 28px "Noto Sans KR", sans-serif';
-    ctx.fillText("다시 해보고 싶은가?",155,1080);
-    ctx.fillText("다음에 해보고 싶은 것",155,1170);
+    ctx.font='800 26px "Noto Sans KR", sans-serif';
+    ctx.fillText("다시 해보고 싶은가?",150,1055);
+    ctx.fillText("다음에 해보고 싶은 것",585,1055);
 
     ctx.fillStyle="#2b2a27";
-    ctx.font='500 29px "Noto Sans KR", sans-serif';
-    ctx.fillText(d.again||"아마도",155,1122);
-    wrapText(ctx,d.next||"천천히 생각해 보기",155,1212,760,42,2);
+    ctx.font='500 28px "Noto Sans KR", sans-serif';
+    ctx.fillText(d.again||"아마도",150,1105);
+    wrapText(ctx,d.next||"천천히 생각해 보기",585,1105,330,39,2);
 
     ctx.textAlign="center";
     ctx.fillStyle="#58715a";
-    ctx.font='800 26px "Noto Sans KR", sans-serif';
-    ctx.fillText("오늘도 조금, 영역이 넓어졌다.",W/2,1280);
+    ctx.font='800 27px "Noto Sans KR", sans-serif';
+    ctx.fillText("오늘도 땅따먹기 성공!",W/2,1225);
+
+    ctx.fillStyle="#7b776f";
+    ctx.font='400 18px "Noto Sans KR", sans-serif';
+    ctx.fillText("행복한영역인가 · 영역확장 이야기",W/2,1260);
     return c;
+  }
+
+  async function copyImage(){
+    const c=drawCanvas();
+    try{
+      const blob = await new Promise(resolve => c.toBlob(resolve, "image/png"));
+      if(!blob || !navigator.clipboard || !window.ClipboardItem){
+        throw new Error("clipboard unsupported");
+      }
+      await navigator.clipboard.write([new ClipboardItem({"image/png": blob})]);
+      $("#notice").textContent = "카드 이미지를 복사했어요. 블로그 글쓰기 화면에 붙여넣어 보세요.";
+    }catch(e){
+      $("#notice").textContent = "이 브라우저에서는 이미지 복사가 어려워요. 아래의 ‘카드 PNG 저장’을 이용해 주세요.";
+    }
   }
 
   function download(){
@@ -687,6 +735,7 @@ ${summary}`;
   });
 
   $("#copyBlog").addEventListener("click",copyBlog);
+  $("#copyImage").addEventListener("click",copyImage);
   $("#download").addEventListener("click",download);
   $("#saveNow").addEventListener("click",()=>save(true));
   $("#newDraft").addEventListener("click",newDraft);
